@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore-compat.js"></script>
+    
+    
+
+    <title>new</title>
+    <link rel="stylesheet" href="new.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- قسم المصادقة -->
+      <div class="auth-section" id="authSection">
+        <h1 style="text-align: center; margin-bottom: 1.5rem">
+          <i
+            class="fa-solid fa-users-gear"
+            style="font-size: 2rem; color: rgb(75, 75, 238)"
+          ></i>
+          اهلا بكم في MUHASIBI
+        </h1>
+
+        <h2 style="text-align: center; margin-bottom: 1.5rem">
+          <i
+            class="fas fa-id-card"
+            style="font-size: 2rem; color: rgb(244, 96, 131)"
+          ></i>
+          تسجيل الدخول
+        </h2>
+        <div class="input-group">
+          <input type="email" id="email" placeholder="البريد الإلكتروني" />
+        </div>
+        <div class="input-group">
+          <input type="password" id="password" placeholder="كلمة المرور" />
+        </div>
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem">
+          <button class="btn btn-primary" onclick="login()">
+            <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+          </button>
+
+          <button class="btn btn-success" onclick="register()">
+            <i class="fas fa-user-plus"></i> تسجيل جديد
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- قسم الصفحة الرئيسية -->
+<div class="dashboard" id="dashboard">
+ 
+<div class="page2">
+
+
+
+
+<div class="menu" id="menu">
+  <ul>
+   
+
+
+    <li><a class="active" href="#" style="width: auto;"><i class="fa-solid fa-house" ></i>
+      <p> </p></a></li>
+      
+      <div class="menu2">
+
+      <button class="btn " onclick="showAddCustomerModal()" >
+        <i class="fa-solid fa-user-plus"></i>
+      </button>
+      <div class="sersh"><input type="text" id="searchInput" placeholder="ابحث هنا..." oninput="searchList()"></div>
+      <div class="customer-listbox">
+        <ul class="customer-list" id="customersList"></ul>
+
+      </div>
+    <li class="logout"><a href="#" onclick="logout()" style="width: auto;"><i class="fa-solid fa-right-from-bracket"></i>
+      <p></p></a></li>
+
+
+
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="state" id="state">
+<div class="openmenuclick">
+  <li class="logo" ><a href="#"><i class="fa-solid fa-bars" id="openmenu"  onclick="openmenu()"></i><p>MUHASIBI</p></a></li>
+
+</div>
+  <div class="data-info">
+    <div class="box">
+      <i class="fa-solid fa-user"></i>
+      <div class="data">
+        <p>عدد الزبائن</p>
+        <span id="counter">⏳</span>
+      </div>
+    </div>
+    <div class="box">
+      <i class="fa-solid fa-money-bill"></i>
+      <div class="data">
+        <p>اجمالي الديون</p>
+        <span id="counter2"></span> ليرة</span>
+      </div>
+    </div>
+    <div class="box">
+      <i class="fa-solid fa-user"></i>
+      <div class="data">
+        <p>user</p>
+        <span>100</span>
+      </div>
+    </div>
+
+
+
+    
+    <ul id="customersList">
+    </ul>
+
+
+      </div>
+
+
+
+       <!-- نافذة إضافة زبون -->
+  <div class="modal" id="addCustomerModal">
+    <div class="modal-content">
+        <h3><i class="fas fa-user-plus"></i> إضافة زبون جديد</h3>
+        <div class="input-group">
+            <input type="text" id="newCustomerName" placeholder="اسم الزبون الجديد">
+        </div>
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+            <button class="btn btn-primary" onclick="addCustomer()">
+                <i class="fas fa-save"></i> اضافة
+            </button>
+            <button class="btn btn-danger" onclick="closeAddCustomerModal()">
+                <i class="fas fa-times"></i> إلغاء
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+            <!-- المحتوى الرئيسي -->
+            <div class="main-content">
+              <div id="customerDetails" style="display: none;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                      <h3 id="selectedCustomerName" ></h3>
+                      <button class="btn btn-danger" onclick="closeCustomerDetails()">
+                          <i class="fas fa-times"></i>
+                      </button>
+                  </div>
+                  
+                  <div class="input-group">
+                      <input type="number" id="amountInput" placeholder="المبلغ" 
+                             onkeypress="handleEnter(event)">
+                  </div>
+                  
+                  <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                      <button class="btn btn-success" onclick="addTransaction('credit')">
+                          <i class="fas fa-plus"></i> إضافة دين
+                      </button>
+                      <button class="btn btn-danger" onclick="addTransaction('debit')">
+                          <i class="fas fa-minus"></i> خصم دين
+                      </button>
+                  </div>
+                  
+                  <h4><i class="fas fa-history"></i> سجل المعاملات</h4>
+                  <ul id="transactionsList"></ul>
+              </div>
+          </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+  
+  
+  </div>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+    
+<script>
+
+//زر القائمة
+function openmenu() {
+  const div = document.getElementById("menu");
+  const openmenu = document.getElementById("openmenu");
+
+  div.style.display = (div.style.display === "none" || div.style.display === "") ? "block" : "none";
+
+
+
+        // عند النقر في أي مكان خارج القائمة، يتم إخفاؤها
+        document.addEventListener("click", (event) => {
+            if (!menu.contains(event.target) && event.target !== openmenu) {
+                menu.style.display = "none";
+            }
+        });
+
+}
+
+
+//اليحث عن زبون
+function searchList() {
+  const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+  const items = document.querySelectorAll('#customersList li');
+  
+  items.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    if (text.includes(searchTerm)) {
+      item.style.display = ''; // يظهر العنصر إذا كان يحتوي على النص المدخل
+    } else {
+      item.style.display = 'none'; // يخفي العنصر إذا كان لا يحتوي على النص المدخل
+    }
+  });
+}
+
+  </script>
+    
+  </body>
+  <script type="module" src="new.js"></script>
+  
+</html>
