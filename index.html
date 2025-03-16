@@ -22,6 +22,19 @@
 
   </head>
   <body>
+
+      <!-- قسم عرض بيانات الزبون (يظهر عند فتح الرابط المباشر) -->
+<div id="customerDebtSection" style="display: none;">
+  <div class="debt-container">
+    <h2 id="customerName"></h2>
+    <p>الدين الحالي: <span id="currentDebt">0</span> ليرة</p>
+    <button onclick="window.print()" class="btn">
+      <i class="fas fa-print"></i> طباعة
+    </button>
+  </div>
+</div>
+
+
     <div class="container">
       <!-- قسم المصادقة -->
       <div class="auth-section" id="authSection">
@@ -433,20 +446,20 @@ function showContent2() {
 
 
 
-
-
-
         async function generateLink(customerId, storeId) {
-  const baseUrl = window.location.origin;
-  const trackingLink = `${baseUrl}/track.html?storeId=${storeId}&customerId=${customerId}`;
+  const trackingLink = `${window.location.origin}?storeId=${storeId}&customerId=${customerId}`;
   
   try {
     await navigator.clipboard.writeText(trackingLink);
-    alert('تم نسخ رابط التتبع!');
+    alert('تم نسخ الرابط!');
   } catch (err) {
     prompt('انسخ الرابط يدويًا:', trackingLink);
   }
 }
+
+
+
+
 
 
 

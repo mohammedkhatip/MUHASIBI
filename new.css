@@ -292,32 +292,22 @@ body {
 
 
 
-  .customer-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid #eee;
+  .debt-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
   }
   
-  .customer-actions {
-    display: flex;
-    gap: 0.5rem;
+  #currentDebt {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #dc3545;
+    margin: 1rem 0;
   }
-  
-  .copy-btn {
-    background: none;
-    border: none;
-    color: #2196F3;
-    cursor: pointer;
-    padding: 0.5rem;
-  }
-  
-  .copy-btn:hover {
-    color: #0d47a1;
-  }
-
-
 
 
 

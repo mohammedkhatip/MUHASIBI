@@ -145,7 +145,12 @@ window.loadCustomers = async () => {
   const customers = [];
 
   querySnapshot.forEach(doc => {
-    customers.push({ id: doc.id, ...doc.data() });
+    const data = doc.data();
+    customers.push({ 
+      id: doc.id,
+      ...data,
+      customerId: data.customerId || 'UNDEFINED' // Fallback للبيانات القديمة
+    });
   });
 
   const list = document.getElementById('customersList');
@@ -408,39 +413,37 @@ window.closeAddCustomerModal = () => {
 
 
 
+// عند تحميل الصفحة
+window.onload = async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const storeId = urlParams.get('storeId');
+  const customerId = urlParams.get('customerId');
 
-// عند تحميل الصفحة مباشرة
-const urlParams = new URLSearchParams(window.location.search);
-const customerId = urlParams.get('customerId');
+  // إذا كان الرابط يحتوي على معلمات التتبع
+  if (storeId && customerId) {
+    document.getElementById('authSection').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('customerDebtSection').style.display = 'block';
 
-if (customerId && !window.user) { // إذا كان الرابط يحتوي على customerId
-  showCustomerDetails(customerId); // اعرض تفاصيل الدين مباشرة
-  document.getElementById('authSection').style.display = 'none'; // اخفي تسجيل الدخول
-}
+    try {
+      const db = getFirestore();
+      const querySnapshot = await getDocs(
+        query(
+          collection(db, "stores", storeId, "customers"),
+          where("customerId", "==", customerId)
+        )
+      );
 
-// إنشاء رابط التتبع عند النقر على اسم الزبون
-async function generateLink(customerId) {
-  const baseUrl = window.location.href.split('#')[0]; // الحصول على رابط الموقع الحالي
-  const trackingLink = `${baseUrl}?customerId=${customerId}`;
-  
-  try {
-    await navigator.clipboard.writeText(trackingLink);
-    alert('تم نسخ رابط التتبع!');
-  } catch (err) {
-    prompt('انسخ الرابط يدويًا:', trackingLink);
+      if (!querySnapshot.empty) {
+        const customerData = querySnapshot.docs[0].data();
+        document.getElementById('customerName').textContent = customerData.name;
+        document.getElementById('currentDebt').textContent = customerData.balance;
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  } else {
+    // الوضع العادي (عرض تسجيل الدخول)
+    document.getElementById('authSection').style.display = 'block';
   }
-}
-
-// تعديل دالة عرض الزبائن لإضافة الرابط
-function renderCustomers(customers) {
-  const list = document.getElementById('customersList');
-  list.innerHTML = customers.map(cust => `
-    <li onclick="showCustomerDetails('${cust.id}')">
-      ${cust.name} 
-      <small>${cust.debt} ل.س</small>
-      <button class="copy-btn" onclick="generateLink('${cust.id}'); event.stopPropagation()">
-        <i class="fas fa-copy"></i>
-      </button>
-    </li>
-  `).join('');
-}
+};
