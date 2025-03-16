@@ -292,6 +292,32 @@ body {
 
 
 
+  .customer-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .customer-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .copy-btn {
+    background: none;
+    border: none;
+    color: #2196F3;
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+  
+  .copy-btn:hover {
+    color: #0d47a1;
+  }
+
+
 
 
 
