@@ -436,6 +436,19 @@ function showContent2() {
 
 
 
+        async function generateLink(customerId, storeId) {
+  const baseUrl = window.location.origin;
+  const trackingLink = `${baseUrl}/track.html?storeId=${storeId}&customerId=${customerId}`;
+  
+  try {
+    await navigator.clipboard.writeText(trackingLink);
+    alert('تم نسخ رابط التتبع!');
+  } catch (err) {
+    prompt('انسخ الرابط يدويًا:', trackingLink);
+  }
+}
+
+
 
 
 
