@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <title>تتبع الديون</title>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="debt-container">
+        <h2 id="customerName"></h2>
+        <p>الدين الحالي: <span id="currentDebt">0</span> ليرة</p>
+    </div>
+
+    <script>
+        const firebaseConfig = { /* إعداداتك */ };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const storeId = urlParams.get('storeId');
+        const customerId = urlParams.get('customerId');
+
+        if (storeId && customerId) {
+            db.doc(`stores/${storeId}/customers/${customerId}`)
+            .get()
+            .then(doc => {
+                if (doc.exists) {
+                    document.getElementById('customerName').textContent = doc.data().name;
+                    document.getElementById('currentDebt').textContent = doc.data().balance;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
