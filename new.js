@@ -55,6 +55,7 @@ onAuthStateChanged(auth, (user) => {
     loadCustomers();
   } else {
     showAuthSection();
+    
   }
 });
 
@@ -390,10 +391,7 @@ observer.observe(targetNode, config);
    // إدارة الواجهة
 
 
-function closeCustomerDetails() {
-    document.getElementById('customerDetails').style.display = 'none';
-    selectedCustomer = null;
-}
+
 
 window.showAddCustomerModal = () => {
     document.getElementById('addCustomerModal').style.display = 'flex';
@@ -409,3 +407,17 @@ window.closeAddCustomerModal = () => {
  window.handleEnter = (e) => {
   if (e.key === 'Enter') addTransaction('credit');
 };
+
+
+
+
+
+// عند تحميل الصفحة مباشرة
+const urlParams = new URLSearchParams(window.location.search);
+const customerId = urlParams.get('customerId');
+
+if (customerId && !window.user) { // إذا كان الرابط يحتوي على customerId
+  showCustomerDetails(customerId); // اعرض تفاصيل الدين مباشرة
+  document.getElementById('authSection').style.display = 'none'; // اخفي تسجيل الدخول
+}
+
