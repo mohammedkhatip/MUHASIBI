@@ -131,26 +131,19 @@ window.addCustomer = async () => {
 
 
 
-
 window.loadCustomers = async () => {
-
-  // 1. تغيير ترتيب الاستعلام حسب lastUsed تنازليًا
   const q = query(
     collection(db, "stores", currentUser.uid, "customers"),
-    orderBy("lastUsed", "desc") // الترتيب حسب آخر استخدام
+    orderBy("lastUsed", "desc")
   );
 
   const querySnapshot = await getDocs(q);
   const customers = [];
 
   querySnapshot.forEach(doc => {
-    const data = doc.data();
-    customers.push({ id: doc.id, ...data });
+    customers.push({ id: doc.id, ...doc.data() });
   });
 
-  // 2. إزالة الفرز اليدوي (لم يعد ضروريًا)
-  
-  // 3. تحديث واجهة المستخدم
   const list = document.getElementById('customersList');
   list.innerHTML = '';
 
@@ -158,27 +151,27 @@ window.loadCustomers = async () => {
     const li = document.createElement('li');
     li.className = 'customer-item';
     li.innerHTML = `
-      <div>
+      <div class="customer-info">
         <h4>${data.name}</h4>
         <p style="color: ${data.balance >= 0 ? 'var(--success)' : 'var(--danger)'}">
           ${data.balance} ليرة
         </p>
       </div>
-      <button class="btn1" onclick="deleteCustomer('${data.id}')">
-        <i class="fas fa-trash"></i>
-      </button>
+      <div class="customer-actions">
+        <button class="copy-btn" onclick="generateLink('${data.customerId}', '${currentUser.uid}'); event.stopPropagation()">
+          <i class="fas fa-link"></i>
+        </button>
+        <button class="btn1" onclick="deleteCustomer('${data.id}')">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
     `;
-    
-    // 4. تحديث lastUsed عند النقر
+
     li.onclick = async () => {
-      // تحديث التاريخ في قاعدة البيانات
       await updateDoc(doc(db, "stores", currentUser.uid, "customers", data.id), {
         lastUsed: new Date()
       });
-      
       showCustomerDetails(data.id, data);
-      
-      // إعادة تحميل القائمة لتحديث الترتيب
       loadCustomers();
     };
     
@@ -421,3 +414,29 @@ if (customerId && !window.user) { // إذا كان الرابط يحتوي عل�
   document.getElementById('authSection').style.display = 'none'; // اخفي تسجيل الدخول
 }
 
+// إنشاء رابط التتبع عند النقر على اسم الزبون
+async function generateLink(customerId) {
+  const baseUrl = window.location.href.split('#')[0]; // الحصول على رابط الموقع الحالي
+  const trackingLink = `${baseUrl}?customerId=${customerId}`;
+  
+  try {
+    await navigator.clipboard.writeText(trackingLink);
+    alert('تم نسخ رابط التتبع!');
+  } catch (err) {
+    prompt('انسخ الرابط يدويًا:', trackingLink);
+  }
+}
+
+// تعديل دالة عرض الزبائن لإضافة الرابط
+function renderCustomers(customers) {
+  const list = document.getElementById('customersList');
+  list.innerHTML = customers.map(cust => `
+    <li onclick="showCustomerDetails('${cust.id}')">
+      ${cust.name} 
+      <small>${cust.debt} ل.س</small>
+      <button class="copy-btn" onclick="generateLink('${cust.id}'); event.stopPropagation()">
+        <i class="fas fa-copy"></i>
+      </button>
+    </li>
+  `).join('');
+}
