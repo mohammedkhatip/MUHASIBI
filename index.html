@@ -436,32 +436,6 @@ function showContent2() {
 
 
 
-// إنشاء رابط التتبع عند النقر على اسم الزبون
-async function generateLink(customerId) {
-  const baseUrl = window.location.href.split('#')[0]; // الحصول على رابط الموقع الحالي
-  const trackingLink = `${baseUrl}?customerId=${customerId}`;
-  
-  try {
-    await navigator.clipboard.writeText(trackingLink);
-    alert('تم نسخ رابط التتبع!');
-  } catch (err) {
-    prompt('انسخ الرابط يدويًا:', trackingLink);
-  }
-}
-
-// تعديل دالة عرض الزبائن لإضافة الرابط
-function renderCustomers(customers) {
-  const list = document.getElementById('customersList');
-  list.innerHTML = customers.map(cust => `
-    <li onclick="showCustomerDetails('${cust.id}')">
-      ${cust.name} 
-      <small>${cust.debt} ل.س</small>
-      <button class="copy-btn" onclick="generateLink('${cust.id}'); event.stopPropagation()">
-        <i class="fas fa-copy"></i>
-      </button>
-    </li>
-  `).join('');
-}
 
 
 
