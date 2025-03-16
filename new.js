@@ -111,19 +111,23 @@ window.addCustomer = async () => {
   }
 
   try {
+      // إنشاء customerId فريد
+      const customerId = 'CUST-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+      
       await addDoc(collection(db, "stores", currentUser.uid, "customers"), {
           name: name,
           balance: 0,
           transactions: [],
-          lastUsed: Date.now() // إضافة توقيت آخر استخدام
+          lastUsed: new Date(),
+          customerId: customerId // إضافة الحقل الجديد
       });
+      
       closeAddCustomerModal();
       loadCustomers();
   } catch (error) {
       alert('خطأ في إضافة الزبون: ' + error.message);
   }
 };
-
 //////////////////////////////
 
 
